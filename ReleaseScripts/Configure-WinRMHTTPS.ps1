@@ -1,6 +1,8 @@
-﻿param(
+﻿#Ao exportar o certificado, a senha é o nome da máquina acrescida de um sufixo
+
+param(
     [Parameter(Mandatory=$true)]
-    [string]$Password,
+    [string]$SufixoSenha,
     [Parameter(Mandatory=$true)]
     [string]$DiretorioCertificado,
     [Parameter(Mandatory=$true)]
@@ -24,11 +26,20 @@ try
     }
 
     Write-Host "Exportando chave do certificado...."
-    Export-PfxCertificate -Cert cert:\LocalMachine\My\$thumbprint  -FilePath "$DiretorioCertificado\$env:computername-CERT-WCF-SSL.pfx" -Password ( ConvertTo-SecureString -String $Password -Force –AsPlainText)
-    Export-Certificate -Cert Cert:\LocalMachine\My\$thumbprint -FilePath "$DiretorioCertificado\$env:computername-CERT-WCF-SSL.cer"
+    Export-PfxCertificate -Cert cert:\LocalMachine\My\$thumbprint  -FilePath "$DiretorioCertificado\$env:computername.pfx" -Password ( ConvertTo-SecureString -String ($env:computername+$SufixoSenha) -Force –AsPlainText)
+    
+    try
+    {
 
-    Write-Host "Habilitando WinRM..."
-    Enable-PSRemoting -Force
+        Write-Host "Habilitando WinRM..."
+        Enable-PSRemoting -Force
+
+    }
+
+    catch
+    {
+        Write-Host $_.Exception.Message
+    }
 
     Write-Host "Adicionando build server a lista de servidores confiáveis..."
     Set-Item wsman:\localhost\client\trustedhosts $BuildServer
