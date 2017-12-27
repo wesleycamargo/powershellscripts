@@ -1,36 +1,12 @@
 
 Param(
-    [string]$filePath = "C:\scripts\trasform config\Web.config",
-    $hashtable1 = @{Name1 = "Value1"; Name2 = "Value2"}
+    [string]$filePath = "C:\scripts\trasform config\Web.config"
 )
  
  
-#$var = (Get-ChildItem env:*).GetEnumerator() | Sort-Object Name
-#$out = ""
-#
-#Foreach ($v in $var) 
-#{
-#    $out = $out + "`t{0,-28} = {1,-28}`n" -f $v.Name, $v.Value
-#
-#
-#
-#    $no = "$xmlFIle"
-#
-#    if($no)
-#    {
-#        Write-Host "existe"
-#    }
-#    else
-#    {
-#        Write-Host "nao existe" 
-#    }
-#
-#}
- 
  
 ####################################################
- 
-function Get-XmlNodes {
+ function Get-XmlNodes {
     param ($inicialNode)
     
     $var = "configuration.connectionStrings.ConectSysConnStr"
@@ -40,7 +16,8 @@ function Get-XmlNodes {
     $envVar.Add($var,"teste")
 
     Foreach ($v in $envVar) {
-        
+ 
+        Write-Host "Verifing variable: $($v.Name)"
         $xpath = Format-xPath $v.Name -isConnString $true
         $node = $inicialNode.SelectSingleNode($xpath)     
 
@@ -48,6 +25,8 @@ function Get-XmlNodes {
 
         $node.SetAttribute($attribName, $v.value )        
     }
+
+
 }
 
 ####################################################
@@ -99,6 +78,8 @@ function Get-AttribName {
 $nodes = $xmlFIle.ChildNodes
  
 Get-XmlNodes $nodes
+
+$xmlFIle.Save()
  
  
  
