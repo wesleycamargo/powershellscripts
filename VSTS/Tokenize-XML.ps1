@@ -13,17 +13,23 @@ Param(
 
     $envVar = (Get-ChildItem env:*).GetEnumerator() | Sort-Object Name
 
-    $envVar.Add($var,"teste")
-
     Foreach ($v in $envVar) {
- 
+             
+      try {
         Write-Host "Verifing variable: $($v.Name)"
         $xpath = Format-xPath $v.Name -isConnString $true
+
+
+
         $node = $inicialNode.SelectSingleNode($xpath)     
 
         $attribName = Get-AttribName -fullVariable $v.name
 
-        $node.SetAttribute($attribName, $v.value )        
+        $node.SetAttribute($attribName, $v.value )         
+      }
+      catch {
+          
+      }  
     }
 
 
