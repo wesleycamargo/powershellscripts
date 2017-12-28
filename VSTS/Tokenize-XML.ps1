@@ -55,7 +55,7 @@ function Format-xPath {
     $attribValue = Get-AttribValue $variable
     $attribName = Get-AttribName $variable   
 
-    return  "//$($attribName.Replace(".","/"))/add[@$attribName='$attribValue']"    
+    return  "//$($attribName.Replace(".","/"))/add[lower-case(@$attribName)='$attribValue']"    
 }
 ####################################################
 
