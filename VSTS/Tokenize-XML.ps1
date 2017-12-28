@@ -19,9 +19,9 @@ Param(
         Write-Host "Verifing variable: $($v.Name)"
         $xpath = Format-xPath $v.Name -isConnString $true
 
-
-
         $node = $inicialNode.SelectSingleNode($xpath)     
+
+        Write-Host $node
 
         $attribName = Get-AttribName -fullVariable $v.name
 
@@ -85,7 +85,7 @@ $nodes = $xmlFIle.ChildNodes
  
 Get-XmlNodes $nodes
 
-$xmlFIle.Save()
+
  
  
  
