@@ -9,17 +9,16 @@ Param(
  function Get-XmlNodes {
     param ($inicialNode)
     
-    $var = "configuration.connectionStrings.ConectSysConnStr"
-
     $envVar = (Get-ChildItem env:*).GetEnumerator() | Sort-Object Name
 
     Foreach ($v in $envVar) {
              
       try {
         Write-Host "Verifing variable: $($v.Name)"
-        $xpath = Format-xPath $v.Name -isConnString $true
+        $xpath = Format-xPath (Format-EnvVariable $v.Name) -isConnString $true
 
         $node = $inicialNode.SelectSingleNode($xpath)     
+
 
         Write-Host $node
 
@@ -34,8 +33,13 @@ Param(
 
 
 }
-
 ####################################################
+
+function Format-EnvVariable{
+    param([string]$var)
+
+    return $var.ToLower().Replace("_",".")
+}
 
 ####################################################
 function Format-xPath {
