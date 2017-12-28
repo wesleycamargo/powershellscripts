@@ -6,41 +6,41 @@ Param(
  
  
 ####################################################
- function Get-XmlNodes {
+function Get-XmlNodes {
     param ($inicialNode)
     
     $envVar = (Get-ChildItem env:*).GetEnumerator() | Sort-Object Name
 
     Foreach ($v in $envVar) {
              
-      try {
-        Write-Host "Verifing variable: $($v.Name)"
-        $xpath = Format-xPath (Format-EnvVariable $v.Name) -isConnString $true
+        try {
+            Write-Host "Verifing variable: $($v.Name)"
+            $xpath = Format-xPath (Format-EnvVariable $v.Name) -isConnString $true
 
-        Write-Host "xPath: $xpath"
+            Write-Host "xPath: $xpath"
 
-        $node = $inicialNode.SelectSingleNode($xpath)     
+            $node = $inicialNode.SelectSingleNode($xpath)     
 
 
-        Write-Host $node
+            Write-Host $node
 
-        $attribName = Get-AttribName -fullVariable $v.name
+            $attribName = Get-AttribName -fullVariable $v.name
 
-        $node.SetAttribute($attribName, $v.value )         
-      }
-      catch {
+            $node.SetAttribute($attribName, $v.value )         
+        }
+        catch {
           
-      }  
+        }  
     }
 
 
 }
 ####################################################
 
-function Format-EnvVariable{
+function Format-EnvVariable {
     param([string]$var)
 
-    return $var.ToLower().Replace("_",".")
+    return $var.ToLower().Replace("_", ".")
 }
 
 ####################################################
@@ -59,9 +59,10 @@ function Format-xPath {
     }
 
     $attribValue = Get-AttribValue $variable
-    $attribName = Get-AttribName $variable   
+    $attribName = Get-AttribName $variable
+    $attribFullName = Get-AttribFullName $variable
 
-    return  "//$($attribName.Replace(".","/"))/add[lower-case(@$attribName)='$attribValue']"    
+    return  "//$($attribFullName.Replace(".","/"))/add[lower-case(@$attribName)='$attribValue']"    
 }
 ####################################################
 
@@ -80,10 +81,18 @@ function Get-AttribValue {
 function Get-AttribName {
     param([string]$fullVariable)
      
+    #$fullVariable.Replace(".$(Get-AttribValue $fullVariable)", "")
+    $var = $fullVariable.Split(".")
+    
+    return $($var[$var.Count - 2])
+}
+####################################################
+function Get-AttribFullName {
+    param([string]$fullVariable)
+     
     $fullVariable.Replace(".$(Get-AttribValue $fullVariable)", "")
 }
 ####################################################
-
 
 [xml]$xmlFIle = Get-Content $filePath 
  
