@@ -17,6 +17,8 @@ Param(
         Write-Host "Verifing variable: $($v.Name)"
         $xpath = Format-xPath (Format-EnvVariable $v.Name) -isConnString $true
 
+        Write-Host "xPath: $xpath"
+
         $node = $inicialNode.SelectSingleNode($xpath)     
 
 
